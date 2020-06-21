@@ -1,0 +1,66 @@
+﻿@model RentalManagement.Models.Equipment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Equipment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Equipment_Category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Equipment_Category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Equipment_Model)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Equipment_Model)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Equipment_Make)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Equipment_Make)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Inven_SerialNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Inven_SerialNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Equipment_Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Equipment_Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rental.Equipment_Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rental.Equipment_Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Equipment_Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

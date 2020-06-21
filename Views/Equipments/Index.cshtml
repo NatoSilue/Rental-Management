@@ -1,0 +1,63 @@
+﻿@model IEnumerable<RentalManagement.Models.Equipment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Equipment_Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Equipment_Model)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Equipment_Make)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Inven_SerialNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Equipment_Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rental.Equipment_Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Equipment_Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Equipment_Model)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Equipment_Make)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Inven_SerialNo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Equipment_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rental.Equipment_Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Equipment_Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Equipment_Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Equipment_Id })
+        </td>
+    </tr>
+}
+
+</table>
