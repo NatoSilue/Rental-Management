@@ -48,6 +48,7 @@ namespace RentalManagement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Rental_ID,Receive_Date,Receive_hr,Return_Date,Return_hr,Rental_rate,Equipment_Name")] Rental rental)
         {
+
             if (ModelState.IsValid)
             {
                 db.Rentals.Add(rental);

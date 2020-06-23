@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using RentalManagement.Models;
+using PagedList;
 
 namespace RentalManagement.Controllers
 {
@@ -19,7 +20,8 @@ namespace RentalManagement.Controllers
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name" : "";
+            //ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
             if (searchString != null)
             {
@@ -39,7 +41,25 @@ namespace RentalManagement.Controllers
                 invoices = invoices.Where(s => s.User.FirstName.Contains(searchString)
                                        || s.User.LastName.Contains(searchString));
             }
-            return View(invoices.ToList());
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    invoices = invoices.OrderBy(s => s.User.LastName);
+                    break;
+                case "name":
+                    invoices = invoices.OrderBy(s => s.User.FirstName);
+                    break;
+                
+                default:
+                    invoices = invoices.OrderBy(s => s.Invoice_No);
+                    break;
+            }
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            return View(invoices.ToPagedList(pageNumber, pageSize));
+            //return View(invoices.ToList());
         }
 
         // GET: Invoices/Details/5
@@ -77,6 +97,17 @@ namespace RentalManagement.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Invoice_ID,Invoice_No,Amount,Job_ID,Rental_ID,Vendor_ID,User_ID")] Invoice invoice)
         {
+            Random r = new Random();
+            invoice.Invoice_No= r.Next();
+           var rental = db.Rentals.Find(invoice.Rental_ID);
+            
+
+            decimal rate = Convert.ToDecimal(rental.Rental_rate);
+
+            decimal days = Convert.ToDecimal(rental.Duration);
+            
+            invoice.Amount = rate * days;
+
             if (ModelState.IsValid)
             {
                 db.Invoices.Add(invoice);
@@ -85,7 +116,7 @@ namespace RentalManagement.Controllers
             }
 
             ViewBag.User_ID = new SelectList(db.Users, "User_ID", "FirstName", invoice.User_ID);
-            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Description", invoice.Job_ID);
+            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Title", invoice.Job_ID);
             ViewBag.Rental_ID = new SelectList(db.Rentals, "Rental_ID", "Equipment_Name", invoice.Rental_ID);
             ViewBag.Vendor_ID = new SelectList(db.Vendors, "Vendor_ID", "SalesPerson", invoice.Vendor_ID);
 
@@ -107,7 +138,7 @@ namespace RentalManagement.Controllers
             }
             
             ViewBag.User_ID = new SelectList(db.Users, "User_ID", "FirstName", invoice.User_ID);
-            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Description", invoice.Job_ID);
+            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Title", invoice.Job_ID);
             ViewBag.Rental_ID = new SelectList(db.Rentals, "Rental_ID", "Equipment_Name", invoice.Rental_ID);
             ViewBag.Vendor_ID = new SelectList(db.Vendors, "Vendor_ID", "SalesPerson", invoice.Vendor_ID);
            
@@ -129,7 +160,7 @@ namespace RentalManagement.Controllers
             }
             ViewBag.User_ID = new SelectList(db.Users, "User_ID", "FirstName", invoice.User_ID);
             //ViewBag.User_ID = new SelectList(db.Users, "User_ID", "LastName", invoice.User_ID);
-            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Description", invoice.Job_ID);
+            ViewBag.Job_ID = new SelectList(db.Jobs, "Job_ID", "Job_Title", invoice.Job_ID);
             ViewBag.Rental_ID = new SelectList(db.Rentals, "Rental_ID", "Rental_ID", invoice.Rental_ID);
             ViewBag.Vendor_ID = new SelectList(db.Vendors, "Vendor_ID", "SalesPerson", invoice.Vendor_ID);
             return View(invoice);

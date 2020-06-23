@@ -61,9 +61,9 @@
 
                                 </a>
 
-                                <a class="nav-link " href="#" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Invoices
-                                </a>
+                                    @Html.ActionLink("Invoices", "Index", "Invoices", "",
+                                    new { @class = "nav-link " })
+                                
 
                                 <a class="nav-link " href="#" aria-expanded="false" aria-controls="pagesCollapseAuth">
                                     Current Projects
@@ -76,7 +76,6 @@
 
                             </nav>
                         </div>
-
 
                         <div class="sb-sidenav-menu-heading">Menu</div>
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -142,7 +141,10 @@
                             <div class="card bg-success text-white mb-4">
                                 <div class="card-body">Invoices</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
+                                    
+                                        @Html.ActionLink("View Details", "Index", "Invoices", "",
+                                        new { @class = "small text-white stretched-link" })
+                                    
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>

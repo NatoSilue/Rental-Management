@@ -1,0 +1,533 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RentalManagementModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Equipment">
+          <Key>
+            <PropertyRef Name="Equipment_Id" />
+          </Key>
+          <Property Name="Equipment_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Equipment_Category" Type="nvarchar" MaxLength="50" />
+          <Property Name="Equipment_Model" Type="nvarchar" MaxLength="50" />
+          <Property Name="Equipment_Make" Type="int" />
+          <Property Name="Inven_SerialNo" Type="int" />
+          <Property Name="Equipment_Name" Type="nvarchar" MaxLength="225" Nullable="false" />
+          <Property Name="Rental_ID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="Invoice_ID" />
+          </Key>
+          <Property Name="Invoice_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Invoice_No" Type="int" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Job_ID" Type="int" Nullable="false" />
+          <Property Name="Rental_ID" Type="int" Nullable="false" />
+          <Property Name="Vendor_ID" Type="int" Nullable="false" />
+          <Property Name="User_ID" Type="int" />
+        </EntityType>
+        <EntityType Name="Invoice_Equipment">
+          <Key>
+            <PropertyRef Name="InvoiceEquipment_ID" />
+          </Key>
+          <Property Name="InvoiceEquipment_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Invoice_ID" Type="int" Nullable="false" />
+          <Property Name="Equipment_ID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Jobs">
+          <Key>
+            <PropertyRef Name="Job_ID" />
+          </Key>
+          <Property Name="Job_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Start_Date" Type="datetime" />
+          <Property Name="End_Date" Type="datetime" />
+          <Property Name="Job_Description" Type="nvarchar" MaxLength="225" />
+          <Property Name="Last_Update" Type="datetime" />
+          <Property Name="Job_Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Rentals">
+          <Key>
+            <PropertyRef Name="Rental_ID" />
+          </Key>
+          <Property Name="Rental_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Receive_Date" Type="datetime" />
+          <Property Name="Receive_hr" Type="time" Precision="7" />
+          <Property Name="Return_Date" Type="datetime" />
+          <Property Name="Return_hr" Type="time" Precision="7" />
+          <Property Name="Rental_rate" Type="int" />
+          <Property Name="Equipment_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Duration" Type="int" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="User_ID" />
+          </Key>
+          <Property Name="User_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="25" />
+          <Property Name="LastName" Type="varchar" MaxLength="25" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Passwords" Type="nvarchar" MaxLength="255" />
+          <Property Name="IsAdmin" Type="bit" />
+        </EntityType>
+        <EntityType Name="Vendors">
+          <Key>
+            <PropertyRef Name="Vendor_ID" />
+          </Key>
+          <Property Name="Vendor_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SalesPerson" Type="nvarchar" MaxLength="225" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" />
+          <Property Name="Phone_No" Type="nvarchar" MaxLength="225" />
+        </EntityType>
+        <Association Name="FK__Equipment__Renta__42E1EEFE">
+          <End Role="Rentals" Type="Self.Rentals" Multiplicity="1" />
+          <End Role="Equipment" Type="Self.Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rentals">
+              <PropertyRef Name="Rental_ID" />
+            </Principal>
+            <Dependent Role="Equipment">
+              <PropertyRef Name="Rental_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Invoice_E__Equip__47A6A41B">
+          <End Role="Equipment" Type="Self.Equipment" Multiplicity="1" />
+          <End Role="Invoice_Equipment" Type="Self.Invoice_Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipment">
+              <PropertyRef Name="Equipment_Id" />
+            </Principal>
+            <Dependent Role="Invoice_Equipment">
+              <PropertyRef Name="Equipment_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Invoice_E__Invoi__46B27FE2">
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="1" />
+          <End Role="Invoice_Equipment" Type="Self.Invoice_Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Invoice">
+              <PropertyRef Name="Invoice_ID" />
+            </Principal>
+            <Dependent Role="Invoice_Equipment">
+              <PropertyRef Name="Invoice_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_UserAccounts">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="User_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="User_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_ID">
+          <End Role="Jobs" Type="Self.Jobs" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Jobs">
+              <PropertyRef Name="Job_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Job_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rental_ID">
+          <End Role="Rentals" Type="Self.Rentals" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rentals">
+              <PropertyRef Name="Rental_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Rental_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vendor_ID">
+          <End Role="Vendors" Type="Self.Vendors" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendors">
+              <PropertyRef Name="Vendor_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Vendor_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RentalManagementModelStoreContainer">
+          <EntitySet Name="Equipment" EntityType="Self.Equipment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invoice" EntityType="Self.Invoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invoice_Equipment" EntityType="Self.Invoice_Equipment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Jobs" EntityType="Self.Jobs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rentals" EntityType="Self.Rentals" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendors" EntityType="Self.Vendors" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Equipment__Renta__42E1EEFE" Association="Self.FK__Equipment__Renta__42E1EEFE">
+            <End Role="Rentals" EntitySet="Rentals" />
+            <End Role="Equipment" EntitySet="Equipment" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Invoice_E__Equip__47A6A41B" Association="Self.FK__Invoice_E__Equip__47A6A41B">
+            <End Role="Equipment" EntitySet="Equipment" />
+            <End Role="Invoice_Equipment" EntitySet="Invoice_Equipment" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Invoice_E__Invoi__46B27FE2" Association="Self.FK__Invoice_E__Invoi__46B27FE2">
+            <End Role="Invoice" EntitySet="Invoice" />
+            <End Role="Invoice_Equipment" EntitySet="Invoice_Equipment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_UserAccounts" Association="Self.FK_Invoice_UserAccounts">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_ID" Association="Self.FK_Job_ID">
+            <End Role="Jobs" EntitySet="Jobs" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rental_ID" Association="Self.FK_Rental_ID">
+            <End Role="Rentals" EntitySet="Rentals" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vendor_ID" Association="Self.FK_Vendor_ID">
+            <End Role="Vendors" EntitySet="Vendors" />
+            <End Role="Invoice" EntitySet="Invoice" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RentalManagementModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Equipment">
+          <Key>
+            <PropertyRef Name="Equipment_Id" />
+          </Key>
+          <Property Name="Equipment_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Equipment_Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Equipment_Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Equipment_Make" Type="Int32" />
+          <Property Name="Inven_SerialNo" Type="Int32" />
+          <Property Name="Equipment_Name" Type="String" MaxLength="225" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Rental_ID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Rental" Relationship="Self.FK__Equipment__Renta__42E1EEFE" FromRole="Equipment" ToRole="Rentals" />
+          <NavigationProperty Name="Invoice_Equipment" Relationship="Self.FK__Invoice_E__Equip__47A6A41B" FromRole="Equipment" ToRole="Invoice_Equipment" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="Invoice_ID" />
+          </Key>
+          <Property Name="Invoice_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Invoice_No" Type="Int32" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Job_ID" Type="Int32" Nullable="false" />
+          <Property Name="Rental_ID" Type="Int32" Nullable="false" />
+          <Property Name="Vendor_ID" Type="Int32" Nullable="false" />
+          <Property Name="User_ID" Type="Int32" />
+          <NavigationProperty Name="Invoice_Equipment" Relationship="Self.FK__Invoice_E__Invoi__46B27FE2" FromRole="Invoice" ToRole="Invoice_Equipment" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Invoice_UserAccounts" FromRole="Invoice" ToRole="Users" />
+          <NavigationProperty Name="Job" Relationship="Self.FK_Job_ID" FromRole="Invoice" ToRole="Jobs" />
+          <NavigationProperty Name="Rental" Relationship="Self.FK_Rental_ID" FromRole="Invoice" ToRole="Rentals" />
+          <NavigationProperty Name="Vendor" Relationship="Self.FK_Vendor_ID" FromRole="Invoice" ToRole="Vendors" />
+        </EntityType>
+        <EntityType Name="Invoice_Equipment">
+          <Key>
+            <PropertyRef Name="InvoiceEquipment_ID" />
+          </Key>
+          <Property Name="InvoiceEquipment_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Invoice_ID" Type="Int32" Nullable="false" />
+          <Property Name="Equipment_ID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Equipment" Relationship="Self.FK__Invoice_E__Equip__47A6A41B" FromRole="Invoice_Equipment" ToRole="Equipment" />
+          <NavigationProperty Name="Invoice" Relationship="Self.FK__Invoice_E__Invoi__46B27FE2" FromRole="Invoice_Equipment" ToRole="Invoice" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="Job_ID" />
+          </Key>
+          <Property Name="Job_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Start_Date" Type="DateTime" Precision="3" />
+          <Property Name="End_Date" Type="DateTime" Precision="3" />
+          <Property Name="Job_Description" Type="String" MaxLength="225" FixedLength="false" Unicode="true" />
+          <Property Name="Last_Update" Type="DateTime" Precision="3" />
+          <Property Name="Job_Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Invoices" Relationship="Self.FK_Job_ID" FromRole="Jobs" ToRole="Invoice" />
+        </EntityType>
+        <EntityType Name="Rental">
+          <Key>
+            <PropertyRef Name="Rental_ID" />
+          </Key>
+          <Property Name="Rental_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Receive_Date" Type="DateTime" Precision="3" />
+          <Property Name="Receive_hr" Type="Time" Precision="7" />
+          <Property Name="Return_Date" Type="DateTime" Precision="3" />
+          <Property Name="Return_hr" Type="Time" Precision="7" />
+          <Property Name="Rental_rate" Type="Int32" />
+          <Property Name="Equipment_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Duration" Type="Int32" />
+          <NavigationProperty Name="Equipments" Relationship="Self.FK__Equipment__Renta__42E1EEFE" FromRole="Rentals" ToRole="Equipment" />
+          <NavigationProperty Name="Invoices" Relationship="Self.FK_Rental_ID" FromRole="Rentals" ToRole="Invoice" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="User_ID" />
+          </Key>
+          <Property Name="User_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Passwords" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IsAdmin" Type="Boolean" />
+          <NavigationProperty Name="Invoices" Relationship="Self.FK_Invoice_UserAccounts" FromRole="Users" ToRole="Invoice" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="Vendor_ID" />
+          </Key>
+          <Property Name="Vendor_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SalesPerson" Type="String" MaxLength="225" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Phone_No" Type="String" MaxLength="225" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Invoices" Relationship="Self.FK_Vendor_ID" FromRole="Vendors" ToRole="Invoice" />
+        </EntityType>
+        <Association Name="FK__Equipment__Renta__42E1EEFE">
+          <End Role="Rentals" Type="Self.Rental" Multiplicity="1" />
+          <End Role="Equipment" Type="Self.Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rentals">
+              <PropertyRef Name="Rental_ID" />
+            </Principal>
+            <Dependent Role="Equipment">
+              <PropertyRef Name="Rental_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Invoice_E__Equip__47A6A41B">
+          <End Role="Equipment" Type="Self.Equipment" Multiplicity="1" />
+          <End Role="Invoice_Equipment" Type="Self.Invoice_Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipment">
+              <PropertyRef Name="Equipment_Id" />
+            </Principal>
+            <Dependent Role="Invoice_Equipment">
+              <PropertyRef Name="Equipment_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Invoice_E__Invoi__46B27FE2">
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="1" />
+          <End Role="Invoice_Equipment" Type="Self.Invoice_Equipment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Invoice">
+              <PropertyRef Name="Invoice_ID" />
+            </Principal>
+            <Dependent Role="Invoice_Equipment">
+              <PropertyRef Name="Invoice_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Invoice_UserAccounts">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="User_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="User_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Job_ID">
+          <End Role="Jobs" Type="Self.Job" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Jobs">
+              <PropertyRef Name="Job_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Job_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Rental_ID">
+          <End Role="Rentals" Type="Self.Rental" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rentals">
+              <PropertyRef Name="Rental_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Rental_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Vendor_ID">
+          <End Role="Vendors" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendors">
+              <PropertyRef Name="Vendor_ID" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Vendor_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RentalManagementEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Equipments" EntityType="Self.Equipment" />
+          <EntitySet Name="Invoices" EntityType="Self.Invoice" />
+          <EntitySet Name="Invoice_Equipment" EntityType="Self.Invoice_Equipment" />
+          <EntitySet Name="Jobs" EntityType="Self.Job" />
+          <EntitySet Name="Rentals" EntityType="Self.Rental" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="Vendors" EntityType="Self.Vendor" />
+          <AssociationSet Name="FK__Equipment__Renta__42E1EEFE" Association="Self.FK__Equipment__Renta__42E1EEFE">
+            <End Role="Rentals" EntitySet="Rentals" />
+            <End Role="Equipment" EntitySet="Equipments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Invoice_E__Equip__47A6A41B" Association="Self.FK__Invoice_E__Equip__47A6A41B">
+            <End Role="Equipment" EntitySet="Equipments" />
+            <End Role="Invoice_Equipment" EntitySet="Invoice_Equipment" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Invoice_E__Invoi__46B27FE2" Association="Self.FK__Invoice_E__Invoi__46B27FE2">
+            <End Role="Invoice" EntitySet="Invoices" />
+            <End Role="Invoice_Equipment" EntitySet="Invoice_Equipment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Invoice_UserAccounts" Association="Self.FK_Invoice_UserAccounts">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Job_ID" Association="Self.FK_Job_ID">
+            <End Role="Jobs" EntitySet="Jobs" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Rental_ID" Association="Self.FK_Rental_ID">
+            <End Role="Rentals" EntitySet="Rentals" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vendor_ID" Association="Self.FK_Vendor_ID">
+            <End Role="Vendors" EntitySet="Vendors" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RentalManagementModelStoreContainer" CdmEntityContainer="RentalManagementEntities">
+          <EntitySetMapping Name="Equipments">
+            <EntityTypeMapping TypeName="RentalManagementModel.Equipment">
+              <MappingFragment StoreEntitySet="Equipment">
+                <ScalarProperty Name="Equipment_Id" ColumnName="Equipment_Id" />
+                <ScalarProperty Name="Equipment_Category" ColumnName="Equipment_Category" />
+                <ScalarProperty Name="Equipment_Model" ColumnName="Equipment_Model" />
+                <ScalarProperty Name="Equipment_Make" ColumnName="Equipment_Make" />
+                <ScalarProperty Name="Inven_SerialNo" ColumnName="Inven_SerialNo" />
+                <ScalarProperty Name="Equipment_Name" ColumnName="Equipment_Name" />
+                <ScalarProperty Name="Rental_ID" ColumnName="Rental_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoices">
+            <EntityTypeMapping TypeName="RentalManagementModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoice">
+                <ScalarProperty Name="Invoice_ID" ColumnName="Invoice_ID" />
+                <ScalarProperty Name="Invoice_No" ColumnName="Invoice_No" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Job_ID" ColumnName="Job_ID" />
+                <ScalarProperty Name="Rental_ID" ColumnName="Rental_ID" />
+                <ScalarProperty Name="Vendor_ID" ColumnName="Vendor_ID" />
+                <ScalarProperty Name="User_ID" ColumnName="User_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoice_Equipment">
+            <EntityTypeMapping TypeName="RentalManagementModel.Invoice_Equipment">
+              <MappingFragment StoreEntitySet="Invoice_Equipment">
+                <ScalarProperty Name="InvoiceEquipment_ID" ColumnName="InvoiceEquipment_ID" />
+                <ScalarProperty Name="Invoice_ID" ColumnName="Invoice_ID" />
+                <ScalarProperty Name="Equipment_ID" ColumnName="Equipment_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Jobs">
+            <EntityTypeMapping TypeName="RentalManagementModel.Job">
+              <MappingFragment StoreEntitySet="Jobs">
+                <ScalarProperty Name="Job_ID" ColumnName="Job_ID" />
+                <ScalarProperty Name="Start_Date" ColumnName="Start_Date" />
+                <ScalarProperty Name="End_Date" ColumnName="End_Date" />
+                <ScalarProperty Name="Job_Description" ColumnName="Job_Description" />
+                <ScalarProperty Name="Last_Update" ColumnName="Last_Update" />
+                <ScalarProperty Name="Job_Title" ColumnName="Job_Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rentals">
+            <EntityTypeMapping TypeName="RentalManagementModel.Rental">
+              <MappingFragment StoreEntitySet="Rentals">
+                <ScalarProperty Name="Rental_ID" ColumnName="Rental_ID" />
+                <ScalarProperty Name="Receive_Date" ColumnName="Receive_Date" />
+                <ScalarProperty Name="Receive_hr" ColumnName="Receive_hr" />
+                <ScalarProperty Name="Return_Date" ColumnName="Return_Date" />
+                <ScalarProperty Name="Return_hr" ColumnName="Return_hr" />
+                <ScalarProperty Name="Rental_rate" ColumnName="Rental_rate" />
+                <ScalarProperty Name="Equipment_Name" ColumnName="Equipment_Name" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="RentalManagementModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="User_ID" ColumnName="User_ID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Passwords" ColumnName="Passwords" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="RentalManagementModel.Vendor">
+              <MappingFragment StoreEntitySet="Vendors">
+                <ScalarProperty Name="Vendor_ID" ColumnName="Vendor_ID" />
+                <ScalarProperty Name="SalesPerson" ColumnName="SalesPerson" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone_No" ColumnName="Phone_No" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
